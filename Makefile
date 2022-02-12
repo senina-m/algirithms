@@ -2,14 +2,19 @@ BUILDDIR=build
 SRCDIR=src
 CC=clang
 
-all: $(BUILDDIR)/task_a.o
-	$(CC) -o $(BUILDDIR)/task_a $^
+all: task_a task_a_alternative task_b
 
 build:
-	mkdir -p $(BUILDDIR)
+	mkdir -p $(BUILDDIR)/week_1
 
 task_a: build
-	$(CC) -g -o $(BUILDDIR)/task_a ${SRCDIR}/task_a.c
+	$(CC) -g -o $(BUILDDIR)/week_1/task_a ${SRCDIR}/week_1/task_a.c
+
+task_a_alternative: build
+	$(CC) -g -o $(BUILDDIR)/week_1/task_a ${SRCDIR}/week_1/task_a.c
+
+task_b: build
+	$(CC) -g -o $(BUILDDIR)/week_1/task_a ${SRCDIR}/week_1/task_a.c
 
 clean:
 	rm -rf $(BUILDDIR)

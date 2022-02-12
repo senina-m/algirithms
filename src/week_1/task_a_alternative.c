@@ -3,6 +3,10 @@
 #include <inttypes.h>
 #include <stdbool.h>
 
+//The variation of task A, if it is not allowed to has more then three flowers
+// with the same type in the whole picture. 
+// No difference if they stay consecutively or separately
+
 typedef struct Repetition{
     int32_t type;
     size_t repititions;
