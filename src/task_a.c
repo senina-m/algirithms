@@ -10,7 +10,7 @@ typedef struct Repetition{
 } Repetition;
 
 Repetition* node_create( int32_t type, size_t repititions) {
-    Repetition* node = malloc(sizeof(Repetition));
+    Repetition* node = (Repetition*) calloc(1, sizeof(Repetition));
     node->type = type;
     node->repititions = repititions;
     return node; 
@@ -46,8 +46,8 @@ typedef struct {
     size_t row;
 } Flower;
 
-Flower* init_flower_array(number_of_flowers){
-    Flower* flowers = calloc(number_of_flowers, sizeof(Flower));
+Flower* init_flower_array(size_t number_of_flowers){
+    Flower* flowers = (Flower*) calloc(number_of_flowers, sizeof(Flower));
     return flowers;
 }
 
@@ -93,15 +93,16 @@ int main() {
 
     size_t max_row = 0;
     size_t first_flower = 0;
-    for(size_t i = 0; i < number_of_flowers; i++){
-        printf("%zu ", flowers[i].row);
-        if(max_row < flowers[i].row){
+    for(size_t i = number_of_flowers; i-- > 0 ;){
+        if(max_row <= flowers[i].row){
             first_flower = i;
             max_row = flowers[i].row;
         }
     }
 
-    fprintf(stdout,"The shoot has to be from flower %zu to flower %zu.", first_flower, first_flower + max_row);
+    clear_flower_array(flowers);
+
+    fprintf(stdout,"%zu %zu", first_flower + 1, first_flower + max_row + 1);
 
    return 0;
 }
