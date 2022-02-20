@@ -1,18 +1,10 @@
 #include <iostream>
+#include <string.h>
 #include <stack>
 #include <map>
 
 using namespace std;
 
-
-void print_map(map<string, int> variables){
-    map<string, int>::iterator it;
-    cout << "----map------\n";
-    for (it = variables.begin(); it != variables.end(); it++){
-        cout << "variables[" << it->first << "]=" << it->second << "\n";
-    }
-    cout << "------------\n";
-}
 
 void print_int_stack(stack<int> &s){
     if(s.empty()){
@@ -23,6 +15,17 @@ void print_int_stack(stack<int> &s){
     print_int_stack(s);
     s.push(x);
     cout << x << " ";
+}
+
+void print_map(map<string, stack<int>> variables){
+    map<string, stack<int>>::iterator it;
+    cout << "----map------\n";
+    for (it = variables.begin(); it != variables.end(); it++){
+        cout << "variables[" << it->first << "]=";
+        print_int_stack(it->second);
+        cout << "\n";
+    }
+    cout << "------------\n";
 }
 
 void print_str_stack(stack<string> &s){
@@ -36,79 +39,74 @@ void print_str_stack(stack<string> &s){
     cout << x << " ";
 }
 
-
 int main() {
-    // cout << "\n\n\n";
-
-    stack<int> values;
-    stack<string> names;
-    map<string, int> variables;
+    stack<string> vars;
+    map<string, stack<int>> variables;
     const string SEPARATOR_STR = "?";
-    const int SEPARATOR_INT = 0;
-    int number_of_block = 0;
-
+    size_t possition;
 
     string line;
     while (getline(cin, line)){
         // cout << "============== " << line << " =========\n";
-        if(line[0] == '{'){ //save values from map to stack
-            names.push(SEPARATOR_STR);
-            values.push(SEPARATOR_INT);
-            // cout << "push separator to names, values\n";
-            map<string, int>::iterator it;
-            for (it = variables.begin(); it != variables.end(); it++){
-                names.push(it->first);
-                // cout << "push names: " << it->first << "\n";
-                values.push(it->second);
-                // cout << "push values: " << it->second << "\n";
+        if(line[0] == '{'){ 
+            vars.push(SEPARATOR_STR);
+        }else if (line[0] == '}'){
+            while(vars.top()[0] != SEPARATOR_STR[0]){
+                variables[vars.top()].pop();
+                // if(variables[vars.top()].empty()) variables.erase(vars.top());
+                vars.pop();
+                // cout << "[";
+                // print_str_stack(vars);
+                // cout << "]\n";
             }
-        }else if (line[0] == '}'){ //restore values from stack
-            variables.clear();
-            // cout << "clear variables \n";
-            while(names.top() != SEPARATOR_STR){
-                variables.insert({names.top(), values.top()});
-                // cout << "variables:[" << names.top() << "]=" << values.top() << "\n";
-                names.pop();
-                values.pop();
-                // cout << "pop name + value from stack \n";
-            }
-            // cout << "pop separators from stack \n";
-            names.pop();
-            values.pop();
+            vars.pop(); // pop separator from stack
         }else{
-            size_t possition = 0;
             possition = line.find('=');
             string var = line.substr(0, possition);
-            line.erase(0, possition + 1);
-            possition = line.find('=');
-            string value = line.substr(0, possition);
+            string value = line.substr(possition + 1);
+            vars.push(var);
 
-            // cout << "var=" << var << " value=" << value <<"\n";
-            if(variables.find(var) != variables.end()) variables.erase(var); 
-
-            if(isdigit(value[0])){ // <var>=<num>
-                    variables.insert({var, atoi(value.c_str())});
-                // cout << "["<< var << "="<< value << "]\n";
+            if(variables.find(var) == variables.end()){
+                stack<int> var_stack;
+                var_stack.push(0);
+                variables.insert({var, var_stack});
+            }
+            // cout << "var=" << var << " value=" << value <<"\n"; 
+            if(isdigit(value[0]) || value[0] == '-'){ // <var>=<num>
+                variables[var].push(atoi(value.c_str()));
             }else{ //<var>=<var>
-                if(variables.find(value) != variables.end()){
-                    variables.insert({var, variables[value]});
-                } else {
-                    variables.insert({var, 0});
-                    variables.insert({value, 0});
-                }
-                cout << variables[value] << "\n";
+                if(variables.find(value) == variables.end()) variables[var].push(0);
+                else variables[var].push(variables[value].top());
+
+                cout << variables[var].top() << "\n";
                 // cout << "["<< var << "="<< variables[value] << "] = value=" << value;
             }
         }
-        // cout << "\n\n";
+        // cout << "\n";
         // print_map(variables);
-        // cout << "names=[";
-        // print_str_stack(names);
+        // cout << "vars=[";
+        // print_str_stack(vars);
         // cout << "]\n";
-        // cout << "values=[";
-        // print_int_stack(values);
-        // cout << "]\n";
-
     }
     return 0;
 }
+
+// a=b -------> 0
+// b=123
+// var=b -------> 123
+// b=-34
+// {
+// c=b -------> -34
+// b=1000000000
+// d=b -------> 1000000000
+// {
+// a=b -------> 1000000000
+// e=var  -------> 123
+// }
+// }
+// b=b -------> -34
+
+
+// a=5
+// a=b -------> 0
+// b=a -------> 0
