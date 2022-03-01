@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string.h>
 #include <stack>
-#include <map>
+#include <unordered_map>
 
 using namespace std;
 
@@ -17,8 +17,8 @@ void print_int_stack(stack<int> &s){
     cout << x << " ";
 }
 
-void print_map(map<string, stack<int>> variables){
-    map<string, stack<int>>::iterator it;
+void print_map(unordered_map<string, stack<int>> variables){
+    unordered_map<string, stack<int>>::iterator it;
     cout << "----map------\n";
     for (it = variables.begin(); it != variables.end(); it++){
         cout << "variables[" << it->first << "]=";
@@ -41,7 +41,7 @@ void print_str_stack(stack<string> &s){
 
 int main() {
     stack<string> vars;
-    map<string, stack<int>> variables;
+    unordered_map<string, stack<int>> variables;
     const string SEPARATOR_STR = "?";
     size_t possition;
 
