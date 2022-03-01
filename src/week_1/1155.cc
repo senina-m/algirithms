@@ -5,6 +5,9 @@
 using namespace std;
 
 int vertex[8];
+char vertex_names[8] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
+int diagonals[4][2] = {{0, 6}, {1, 7}, {2, 4}, {3, 5}};
+char diagonal_neighbors[4][2] = {{'B','C'}, {'A', 'E'}, {'B','A'}, {'H','E'}};
 int graph[8][8] = {
     {0, 1, 0, 1, 1, 0, 0, 0},
     {1, 0, 1, 0, 0, 1, 0, 0},
@@ -15,61 +18,77 @@ int graph[8][8] = {
     {0, 0, 1, 0, 0, 1, 0, 1},
     {0, 0, 0, 1, 1, 0, 1, 0}
 };
-
-int sum = 0;
-
 stringstream strm;
 
-int delete_neighbours(int i){
-    int retval = 0;
-    for(int j=0; j<8; j++){
-        while(graph[i][j] && vertex[j] && vertex[i]){
-            strm << (char)('A'+i) << (char)('A'+j) << "-" << endl;
-            vertex[i]--;
-            vertex[j]--;
-            sum-=2;
-            retval = 1;
+int delete_neighbors(){
+    // cout << "delete_neighbors" << endl;
+    int some_deletions = 0;
+    for(int i = 0; i < 8; i++){
+        for(int j = 0; j < 8; j++){
+            if(graph[i][j] && vertex[i] && vertex[j]){
+                // cout << "delete_dioganales at i=" << i << " j=" << j << endl;
+                int diff = vertex[i] > vertex[j] ? vertex[j]: vertex[i];
+                for (int k = 0; k < diff; k++){
+                    strm << vertex_names[i] << vertex_names[j] << "-" << endl;
+                }
+                vertex[i] -= diff;
+                vertex[j] -= diff;
+                some_deletions = 1;
+            }
         }
     }
-    return retval;
+    return some_deletions;
 }
 
-int delete_diagonal(int i, int j){
-    int retval = 0;
-    while(vertex[i] && vertex[j]){
-        strm << (char)('A'+((i+1)&0b11)) << (char)('A'+((j+3)&0b11)+4) << "+" << endl;
-        strm << (char)('A'+i) << (char)('A'+((i+1)&0b11)) << "-" << endl;
-        strm << (char)('A'+((j+3)&0b11)+4) << (char)('A'+j) << "-" << endl;
-        vertex[i]--;
-        vertex[j]--;
-        retval = 1;
+int delete_dioganales(){
+    // cout << "delete_dioganales" << endl;
+    int some_deletions = 0;
+    int i_index = 0;
+    int j_index = 0;
+    for(int i = 0; i < 4; i++){
+        i_index = diagonals[i][0];
+        j_index = diagonals[i][1];
+
+        if(vertex[i_index] && vertex[j_index]){
+            // cout << "delete_dioganales at i=" << i_index << " j=" <<j_index <<endl;
+            int diff = vertex[i_index] > vertex[j_index] ? vertex[j_index]: vertex[i_index];
+            for(int k = 0; k < diff; k++){
+                strm << diagonal_neighbors[i][0] << diagonal_neighbors[i][1] << "+" << endl;
+                strm << diagonal_neighbors[i][0] << vertex_names[i_index] << "-" << endl;
+                strm << diagonal_neighbors[i][1] << vertex_names[j_index] << "-" << endl;
+            }
+            vertex[i_index] -= diff;
+            vertex[j_index] -= diff;
+            some_deletions = 1;
+        }
     }
-    return retval;
+    return some_deletions;
 }
 
-int main(int argc, char const *argv[]) {
-    for(int i=0; i<8; i++){
+void print_vertexes(){
+    for (int i = 0; i < 8; i++){
+        cout << vertex[i] << " ";
+    }
+    cout << endl;
+}
+
+int main(){
+    for (int i = 0; i < 8; i++){
         cin >> vertex[i];
-        sum += vertex[i];
+    }
+    int something_deleted = 1;
+    
+
+    while(something_deleted){
+        something_deleted = 0;
+        // print_vertexes();
+        something_deleted += delete_neighbors();
+        something_deleted += delete_dioganales();
     }
 
-    if(sum & 1) {
-        cout << "IMPOSSIBLE" << endl;
-        return 0;
-    }
-
-    int flag = 1;
-    while(flag){
-        flag = 0;
-        for(int i=0; i<8; i++){
-            flag += delete_neighbours(i);
-            flag += delete_diagonal(i, ((i+6)&0b11) + 4);
-        }
-    }
-
-    for(int i: vertex){
-        if(i) {
-            cout << "IMPOSSIBLE" << endl;
+    for (int i = 0; i < 8; i++){
+        if(vertex[i] != 0){
+            cout << "IMPOSSIBLE";
             return 0;
         }
     }
