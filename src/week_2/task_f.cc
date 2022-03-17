@@ -1,53 +1,59 @@
+
 #include <iostream>
-#include <vector>
-#include <stdbool.h>
+#include <set>
+#include <fstream>
 
 using namespace std;
 
-//todo: maybe i don't need 0, and it's ok to compare for >= only
-// return 1 if l1 > l2, 0 if l1==l2, else -1
-int compare(string l1, string l2){
-    for (int i; i < max(l1.size(), l2.size()), i++){
-        if((char)l1[i] > (char)l2[i]) return 1;
-        else if((char)l2[i] > (char)l1[i]) return -1;
+int main(){
+    ifstream fin("/home/senina/Desktop/itmo/algorithms/build/week_2/number.in");
+	ofstream fout("/home/senina/Desktop/itmo/algorithms/build/week_2/number.out");
+	// ifstream fin("number.in");
+	// ofstream fout("number.out");
+
+
+    //a >= b
+    auto cmp = [](string a, string b) {
+        for (int i = 0; i < min(a.size(), b.size()); i++){
+            // cout << "------ a=" << a << " a.size=" << a.size() << " b.size=" << b.size() << " b=" << b << "-----" << endl;
+            if((char)a[i] > (char)b[i]) return 1; // cout << "at i=" << i << " a[i] > b[i]" << endl;
+            if((char)a[i] < (char)b[i]) return 0; // cout << "at i=" << i << " a[i] < b[i]" << endl;
+        } 
+        // if( (a.size() > b.size()) && ( (int) a[b.size()] > 48) ) return 1; //48 is zero at ascii table
+        // else if ( (a.size() < b.size()) && ( (int) b[a.size()] > 48) ) return 0;
+        // else return (int)(a.size() <= b.size());
+
+        if(a.size() == b.size()) return 1;
+        else if(a.size() > b.size()){
+            if((int) a[b.size()] > 48) return 1;
+            else return 0;
+        }else {
+            if((int) b[a.size()] > 48) return 0;
+            else return 1;
+        }
+    };
+
+    set<string, decltype(cmp)> numbers(cmp);
+
+    string line;
+    while (!fin.eof()){
+        fin >> line;
+        // cout << "new line:" << line << endl;
+        numbers.insert(line);
+    
+        // std::set<string>::iterator it;
+        // for(it = (numbers).begin(); it != (numbers).end(); it++){
+        //     cout << *it << " ";
+        // }
+        // cout << endl;
     }
-    return 0;
-}
 
-int find_index(string l, vector<string>* numbers_pointer, int left, int right){
-    vector<string> numbers = *numbers_pointer;
-    int mid = (right - left)/2;
-    int comparation = 
-    switch (compare(l, numbers[mid])){
-        case 1:
-            mid = left;
-            break;
-        case -1:
-            mid = right
-            break;
-        case 0;
-            return mid;
-        default:
-            cout << "ERROR";    
-    }
-    if(left == right || left = right - 1) return left;
-    find_index(line, numbers_pointer, left, right);
-}
-
-int main() {
-    vector<string> numbers;
-
-    string line;    
-    getline(cin, line);
-    numbers.insert(numbers.begin(), line);
-
-    while (getline(cin, line)){
-        int index = find_index(line, &numbers, 0, numbers.size());
-        numbers.insert(numbers.begin() + index, line);
+    std::set<string>::iterator it;
+    for(it = (numbers).begin(); it != (numbers).end(); it++){
+        fout << *it;
+        // cout << *it;
     }
 
-    for(int i = 0; i < numbers.size(); i++){
-        cout << numbers[i];
-    }
-    cout << endl;
+	fin.close();
+	fout.close();
 }

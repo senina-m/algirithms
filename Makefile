@@ -7,8 +7,7 @@ ADRESSFLAGS=-fsanitize=address
 all: task_a task_a_alternative task_b task_b_alternative task_c task_c_v1 task_d 1005
 
 build:
-	mkdir -p $(BUILDDIR)/week_1
-	mkdir -p $(BUILDDIR)/week_2
+	mkdir -p $(BUILDDIR)/week_1 $(BUILDDIR)/week_2
 
 task_a: build
 	$(CC) -g -o $(BUILDDIR)/week_1/task_a ${SRCDIR}/week_1/task_a.c
