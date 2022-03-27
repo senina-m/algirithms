@@ -52,54 +52,33 @@ int main() {
     int weights[alph_len]; //weight of numbers
     for(int i = 0; i < line.size(); i++){
         line_nums[int(line[i]) - 97]++; //97 -- code of "a" in ascii table
-        // cout << "\n" << line[i] << "=[" << int(line[i]) - 97 << "]\n";
     }
-
-    // print_int_arr("line_nums", line_nums, alph_len);
 
     for(int i = 0; i < alph_len; i++){
         cin >> weights[i];
     }
 
-    // print_int_arr("weights", weights, alph_len);
-    // print_char_arr("alphabet", alphabet, alph_len);
-    
-
     sort_weights(alph_len, weights, line_nums, alphabet);
 
-    // cout << "after sort \n";
-    // print_int_arr("line_nums", line_nums, alph_len);
-    // print_int_arr("weights", weights, alph_len);
-    // print_char_arr("alphabet", alphabet, alph_len);
-
-    char output[n];
     int k = 0;
-    int it = 0;
-    while (k < alph_len){
-        // cout << "k=" << k << " ";
-        // cout << "line_nums[k]=" << line_nums[k] << endl;
-
-        if(line_nums[k] >= 2){
-            output[it] = alphabet[k];
-            output[n - it - 1] = alphabet[k];
-            line_nums[k] -=2;
-            it++;
-        }else{
+    char output[n];
+    for (int i = 0; i < alph_len; i++){
+        if(line_nums[i] >= 2){
+            output[k] = alphabet[i];
+            output[n - k - 1] = alphabet[i];
             k++;
+            line_nums[i] -=2;
         }
     }
 
-    k = 0;
-    for (k; k < alph_len; k++){
-        if(line_nums[k] == 1){
-            // cout << "k=" << k << "line_nums[k]=" << line_nums[k] << endl;
-            output[it] = alphabet[k];
-            it++;
+    for (int i = 0; i < alph_len; i++){
+        for (int j = 0; j < line_nums[i]; j++){
+            output[k] = alphabet[i];
+            k++;
         }
     }
 
     for (int i = 0; i < n; i++){
         cout << output[i];
     }
-    
 }
