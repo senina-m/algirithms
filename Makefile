@@ -36,11 +36,17 @@ task_d: build
 1155: build
 	$(CCP) $(ADRESSFLAGS) -g -o $(BUILDDIR)/week_1/1155 ${SRCDIR}/week_1/1155.cc
 
+task_e: build
+	$(CCP) $(ADRESSFLAGS) -g -o $(BUILDDIR)/week_2/task_e ${SRCDIR}/week_2/task_e.cc
+
 task_f: build
 	$(CCP) $(ADRESSFLAGS) -g -o $(BUILDDIR)/week_2/task_f ${SRCDIR}/week_2/task_f.cc
 
 task_g: build
 	$(CCP) $(ADRESSFLAGS) -g -o $(BUILDDIR)/week_2/task_g ${SRCDIR}/week_2/task_g.cc
+
+task_h: build
+	$(CCP) $(ADRESSFLAGS) -g -o $(BUILDDIR)/week_2/task_h ${SRCDIR}/week_2/task_h.cc
 
 clean:
 	rm -rf $(BUILDDIR)

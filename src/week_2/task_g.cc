@@ -1,6 +1,4 @@
 #include <iostream>
-#include <vector>
-#include <stdbool.h>
 
 using namespace std;
 
@@ -67,7 +65,7 @@ int main() {
             output[k] = alphabet[i];
             output[n - k - 1] = alphabet[i];
             k++;
-            line_nums[i] -=2;
+            line_nums[i] -=2; 
         }
     }
 
