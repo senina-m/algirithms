@@ -40,7 +40,7 @@ task_f: build
 	$(CCP) $(ADRESSFLAGS) -g -o $(BUILDDIR)/week_2/task_f ${SRCDIR}/week_2/task_f.cc
 
 task_g: build
-	$(CCP) $(ADRESSFLAGS) -g -o $(BUILDDIR)/week_2/task_g ${SRCDIR}/week_1/task_g.cc
+	$(CCP) $(ADRESSFLAGS) -g -o $(BUILDDIR)/week_2/task_g ${SRCDIR}/week_2/task_g.cc
 
 clean:
 	rm -rf $(BUILDDIR)
