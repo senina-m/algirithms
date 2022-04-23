@@ -19,7 +19,7 @@ bool check_if_can_place(int* stalls, int n, int dist, int cows_num){
         }
     }
     return false;
-}
+}k
 
 int main(){
     int n, cows_num;
@@ -36,16 +36,10 @@ int main(){
     while (l < r - 1){
         int mid_dist = (r + l)/2;
         // cout << "==============  r=" << r << " l=" << l << " mid_dist=" << mid_dist << "  ============="<< endl;
-        if(check_if_can_place(stalls, n, mid_dist, cows_num)){
-            l = mid_dist;
-        }else{
-            r = mid_dist;
-        }
+        if(check_if_can_place(stalls, n, mid_dist, cows_num)) l = mid_dist;
+        else r = mid_dist;
     }
 
-    if (check_if_can_place(stalls, n, r, cows_num)) {
-		cout << r;
-	} else {
-		cout << l;
-	}
+    if (check_if_can_place(stalls, n, r, cows_num)) cout << r;
+	else cout << l;
 }

@@ -4,10 +4,10 @@ CC=clang
 CCP=g++
 ADRESSFLAGS=-fsanitize=address
 
-all: task_a task_a_alternative task_b task_b_alternative task_c task_c_v1 task_d 1005
+all: task_a task_a_alternative task_b task_b_alternative task_c task_c_v1 task_d 1005 task_j
 
 build:
-	mkdir -p $(BUILDDIR)/week_1 $(BUILDDIR)/week_2 $(BUILDDIR)/test
+	mkdir -p $(BUILDDIR)/week_1 $(BUILDDIR)/week_2 $(BUILDDIR)/week_3 $(BUILDDIR)/test
 
 task_a: build
 	$(CC) -g -o $(BUILDDIR)/week_1/task_a ${SRCDIR}/week_1/task_a.c
@@ -47,6 +47,12 @@ task_g: build
 
 task_h: build
 	$(CCP) $(ADRESSFLAGS) -g -o $(BUILDDIR)/week_2/task_h ${SRCDIR}/week_2/task_h.cc
+
+task_j: build
+	$(CCP) $(ADRESSFLAGS) -g -o $(BUILDDIR)/week_3/task_j ${SRCDIR}/week_3/task_j.cc
+
+task_j_alt: build
+	$(CCP) $(ADRESSFLAGS) -g -o $(BUILDDIR)/week_3/task_j_alt ${SRCDIR}/week_3/task_j_alt.cc
 
 clean:
 	rm -rf $(BUILDDIR)
