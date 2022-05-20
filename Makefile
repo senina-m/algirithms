@@ -7,7 +7,7 @@ ADRESSFLAGS=-fsanitize=address
 all: task_a task_a_alternative task_b task_b_alternative task_c task_c_v1 task_d 1005 task_j
 
 build:
-	mkdir -p $(BUILDDIR)/week_1 $(BUILDDIR)/week_2 $(BUILDDIR)/week_3 $(BUILDDIR)/test
+	mkdir -p $(BUILDDIR)/week_1 $(BUILDDIR)/week_2 $(BUILDDIR)/week_3 ${BUILDDIR}/week_4 $(BUILDDIR)/test 
 
 task_a: build
 	$(CC) -g -o $(BUILDDIR)/week_1/task_a ${SRCDIR}/week_1/task_a.c
@@ -59,6 +59,15 @@ task_l: build
 
 task_i: build
 	$(CPP) $(ADRESSFLAGS) -g -o $(BUILDDIR)/week_3/task_i ${SRCDIR}/week_3/task_i.cc
+
+task_n: build
+	$(CPP) $(ADRESSFLAGS) -g -o $(BUILDDIR)/week_4/task_n ${SRCDIR}/week_4/task_n.cc
+
+task_m: build
+	$(CPP) $(ADRESSFLAGS) -g -o $(BUILDDIR)/week_4/task_m ${SRCDIR}/week_4/task_m.cc
+
+tmp: build
+	$(CPP) $(ADRESSFLAGS) -g -o $(BUILDDIR)/test/tmp ${SRCDIR}/test/tmp.cc
 
 clean:
 	rm -rf $(BUILDDIR)
