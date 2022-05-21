@@ -3,6 +3,8 @@
 #include <queue>
 #include <vector>
 #include <algorithm>
+#include <string.h>
+#include <stack>
 
 using namespace std;
 
@@ -10,6 +12,11 @@ typedef struct dot{
     int x;
     int y;
 } dot;
+
+typedef struct child{
+    int dist = INT_MAX;
+    char path = '!';
+} child;
 
 void print_map(int** map, int N, int M, string label){
     cout << "++++" << label <<"+++" << endl;
@@ -39,13 +46,30 @@ void print_vector(vector<dot> v){
     cout <<endl;
 }
 
-void clear_arrays(dot** arr1, int** arr2, int N){
+
+void print_vertexes(child** arr, int N, int M){
+    cout << "======" << "dist" << "======" << endl;
     for(int i = 0; i < N; i++){
-            delete [] arr1[i];
-            delete [] arr2[i];
+        for(int j = 0; j < M; j++){
+            cout << arr[i][j].dist << " ";
         }
-    delete [] arr1;
-    delete [] arr2;
+        cout << endl;
+    }
+    cout << "======" << "path" << "======" << endl;
+    for(int i = 0; i < N; i++){
+        for(int j = 0; j < M; j++){
+            cout << arr[i][j].path << " ";
+        }
+        cout << endl;
+    }
+    cout << "============" << endl;
+}
+
+void clear_arrays(child** arr, int N){
+    for(int i = 0; i < N; i++){
+        delete [] arr[i];
+    }
+    delete [] arr;
 }
 
 vector<dot> get_neighbors(dot v, int** map, int N, int M){
@@ -68,102 +92,106 @@ vector<dot> get_neighbors(dot v, int** map, int N, int M){
     return neighbors;    
 }
 
-char add_new_parent(dot** path, dot v){
-    int x = v.x;
-    int y = v.y;
-    dot parent = path[y][x];
-    int parent_x = parent.x;
-    int parent_y = parent.y;
-    
-
-    if(x + 1 == parent_x  && y == parent_y){
-        return 'W';
-    }
-
-    if(x - 1 == parent_x  && y == parent_y){
+char get_child_direction(dot v, dot u){
+    if(v.x + 1 == u.x  && v.y == u.y){
         return 'E';
     }
 
-    if(x == parent_x  && y + 1 == parent_y){
-        return 'N';
+    if(v.x - 1 == u.x  && v.y == u.y){
+        return 'W';
     }
 
-    if(x == parent_x  && y - 1 == parent_y){
+    if(v.x == u.x  && v.y + 1 == u.y){
         return 'S';
     }
 
+    if(v.x == u.x  && v.y - 1 == u.y){
+        return 'N';
+    }
+
     return '!';
+}
+
+
+dot move_to_child(child** vertexes, dot v){
+    switch (vertexes[v.y][v.x].path){
+    case 'N':
+        return (dot) {v.x, v.y + 1};
+    case 'S':
+        return (dot) {v.x, v.y - 1};
+    case 'W':
+        return (dot) {v.x + 1, v.y};
+    case 'E':
+        return (dot) {v.x - 1, v.y};
+    
+    default:
+        cout << "Error! Wrong path!" << endl;
+        return (dot) {-1, -1};
+    }
+
 
 }
 
-vector<char> bfs(int** map, dot start, dot end, int N, int M, int* time) {
+stack<char> bfs(int** map, dot start, dot end, int N, int M, int* time) {
 
     //массив с минимальным расстоянием до вершины
-    int** dist = new int*[N];
-
-    //массив с родителем (откуда мы пришли в эту вершину)
-    dot** path = new dot*[N];
+    child** vertexes = new child*[N];
 
     //инициализация этих массивов
     for(int i = 0; i < N; i++){
-        dist[i] = new int[M];
-        path[i] = new dot[M];
+        vertexes[i] = new child[M];
         for(int j = 0; j < M; j++){
-            dist[i][j] = INT_MAX;
-            path[i][j] = (dot) {.x=-1, .y=-1}; //{-1, -1}
+            vertexes[i][j] = {}; //TODO:
         }
     }
 
     //делаем стартовую вершину первой
-    dist[start.y][start.x] = 0;
+    vertexes[start.y][start.x].dist = 0;
     // создаём очередь для bfs
     queue<dot> q;
     // кладём стартовую вершину в очередь 
     q.push(start);
+
     //для каждой вершины из очереди проверяем можно ли до её соседей
     //дойти быстрее, чем можно было раньше, если можно обновляем путь
     //(через текущую вершину) и расстояние пути
-
     while (!q.empty()) {
         // print_queue(q);
         dot v = q.front();
+        // cout << "popped " << v.x << ", " << v.y << endl;
         q.pop();
 
-        // print_vector(get_neighbors(v, map, N, M));
-
+        auto neighbors = get_neighbors(v, map, N, M);
+        // print_vector(neighbors);
         for (dot u : get_neighbors(v, map, N, M)) {
-            if (dist[u.y][u.x] > dist[v.y][v.x] + map[u.y][u.x] && map[u.y][u.x] != -1) { //TODO: mb remove -1 check
-                path[u.y][u.x] = v;
-                dist[u.y][u.x] = dist[v.y][v.x] + map[u.y][u.x];
+            if (vertexes[u.y][u.x].dist > vertexes[v.y][v.x].dist + map[u.y][u.x] && map[u.y][u.x] != -1) {
+                vertexes[u.y][u.x].path = get_child_direction(v, u);
+                vertexes[u.y][u.x].dist = vertexes[v.y][v.x].dist + map[u.y][u.x];
                 q.push(u);
+                // cout << "added " << u.x << ", " << u.y << endl;
             }
         }
     }
 
-    // print_map(dist, N, M, "dist");
+    // print_vertexes(vertexes, N, M);
 
-    // если пути не существует, возвращаем пустой vector
-    if (dist[end.y][end.x] == INT_MAX) {
+    // если пути не существует, возвращаем пустой
+    if (vertexes[end.y][end.x].dist == INT_MAX) {
         *time=-1;
-        // clear_arrays(path, dist, N);
+        clear_arrays(vertexes, N);
         return {};
     }
-    *time = dist[end.y][end.x];
+    *time = vertexes[end.y][end.x].dist;
 
-    // cout << "main end = {" << end.x << ", " << end.y << "}; " << endl;
-    vector<char> min_path;
-    // cout << path[end.y][end.x].x << "; ; ; " <<  path[end.y][end.x].y<<endl;
-    while (path[end.y][end.x].x != -1 || path[end.y][end.x].y != -1) {
-        char ch = add_new_parent(path, end);
-        // cout << "end = {" << end.x << ", " << end.y << "}; letter = " << ch << endl;
-        min_path.push_back(ch);
-        end = path[end.y][end.x];
+    stack<char> min_path;
+    // cout << "end " << end.x << ", " << end.y << endl;
+    while (vertexes[end.y][end.x].path != '!' || vertexes[end.y][end.x].path != '!') {
+        min_path.push(vertexes[end.y][end.x].path);
+        end = move_to_child(vertexes, end);
+        // cout << "end " << end.x << ", " << end.y << endl;
     }
 
-    // clear_arrays(path, dist, N);
-
-    // путь был рассмотрен в обратном порядке, поэтому его нужно перевернуть
-    reverse(min_path.begin(), min_path.end());
+    clear_arrays(vertexes, N);
     return min_path;
 }
 
@@ -217,15 +245,14 @@ int main(){
     // print_map(map, N, M, "map");
 
     int time = -1; 
-    vector<char> path = bfs(map, start, stop, N, M, &time);
+    stack<char> path = bfs(map, start, stop, N, M, &time);
     
     cout << time << endl;
-    if(time != -1){
-        for (char i: path){
-            cout << i;
-        }
-        cout << endl;
+    while(!path.empty()){
+        cout << path.top();
+        path.pop();
     }
+    
 
     for(int i = 0; i < N; i++){
         delete [] map[i];
